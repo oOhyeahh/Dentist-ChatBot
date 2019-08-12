@@ -18,18 +18,6 @@ pip3 install -r requirements.txt
 python3 -m swagger_server
 ```
 
-and open your browser to here:
-
-```
-http://localhost:8080/v1/ui/
-```
-
-Your Swagger definition lives here:
-
-```
-http://localhost:8080/v1/swagger.json
-```
-
 To launch the integration tests, use tox:
 ```
 sudo pip install tox
