@@ -23,7 +23,7 @@ const startscreenOptions = () => {
           value: "getDentistInfo"
         },
         {
-          text: "i want to check available timeslots specific dentist",
+          text: "i want to check dentist available timeslot for today",
           value: "getTimeslot"
         },
         {
@@ -44,7 +44,7 @@ const startscreenOptions = () => {
       if (res.text === "I want to check dentist detial information") {
         checkDentistDetial();
       } else if (
-        res.text === "i want to check available timeslots specific dentist"
+        res.text === "i want to check dentist available timeslot for today"
       ) {
         checkDentistTimeslot();
       } else if (res.text === "I want to make a booking") {
