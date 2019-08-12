@@ -1,0 +1,127 @@
++ hello bot
+- Hello, human!
+- Hey, how's going
+- Goodday Sir!
+
++ how are you
+- I'm good, how are you?
+
++ i want to make a booking with * from * to * at * my name is * and the contact number is *
+- <set dentist_id=<star1>><set start_time=<star2>><set end_time=<star3>>
+^ <set bookingdate=<star4>><set patient_name=<star5>><set phonenumber=<star6>>
+^ <call>make_booking</call> 
+
++ i want to cancel my booking *
+- <call>cancel_booking</call><set id=<star1>>
+
++ i want to check available dentists
+- <call>get_available_dentist</call>
+
++ i want to check available timeslots for each dentist
+- <call>get_all_dentists_timeslot</call>
+
++ i want to check * available timeslots
+- <call>get_dentist_timeslot</call><set id=<star1>>
+
++ i want to see the details information of the dentist *
+- <call>check_dentist_info</call><set name=<star>>
+
+
+> object cancel_booking python
+    import requests
+    id = rs.get_uservar(rs.current_user(),'id')
+    url = 'http://0.0.0.0:5100/timeslot/{}'.format(id)
+    r = requests.delete(url)
+    if r.status_code == 200:
+        return 'delete success'
+    if r.status_code == 404:
+        return 'booking not found'
+< object
+
+> object make_booking python
+    import requests
+    timeslot_url = 'http://0.0.0.0:5100/timeslot/'
+    dentist_id = int(rs.get_uservar(rs.current_user(), 'dentist_id'))
+    phonenumber = (rs.get_uservar(rs.current_user(), 'phonenumber'))
+    patient_name = rs.get_uservar(rs.current_user(), 'patient_name')
+    bookingdate = rs.get_uservar(rs.current_user(), 'bookingdate')
+    format_booking_date = bookingdate[:4] + "-" + bookingdate[4:6] + "-" +bookingdate[6:8]
+    start_time = rs.get_uservar(rs.current_user(), 'start_time')
+    format_start_time = start_time[:2] + ":" + start_time[2:4]
+    end_time = rs.get_uservar(rs.current_user(), 'end_time')
+    format_end_time = end_time[:2] + ":" + end_time[2:4]
+    payload = {
+        "id": dentist_id,
+        "patientName": patient_name,
+        "phonenumber": phonenumber,
+        "bookingdate": format_booking_date,
+        "starttime": format_start_time,
+        "endtime": format_end_time,
+    }        
+    r = requests.post(timeslot_url, json=payload)
+    return (" " + r.json()['message'])
+< object
+
+> object check_dentist_info python
+    import requests
+    name = rs.get_uservar(rs.current_user(), 'name')
+    dentist_url = 'http://0.0.0.0:5200/dentists/{}'.format(name)
+    r = requests.get(dentist_url)
+    if r.status_code == 200:
+        dentist_json = r.json()
+        dentist_info_list = []
+        for i in range(len(dentist_json)):
+            dentist_id = dentist_json[i]['dentistId']
+            dentist_url = 'http://0.0.0.0:5200/dentists/{}/information'.format(dentist_id)
+            r = requests.get(dentist_url)
+            dentist_info_list.append(r.json())
+        return dentist_info_list
+    return "dentist is not found"
+< object
+
+> object get_available_dentist python
+    import requests
+    dentist_url = 'http://0.0.0.0:5200/dentists/'
+    r = requests.get(dentist_url)
+    if r.status_code == 200:
+        dentist_json = r.json()    
+        return dentist_json
+    
+    return 'Some error happen in the bot :('
+
+< object 
+
+> object get_all_dentists_timeslot python
+    import requests
+    dentist_url = 'http://0.0.0.0:5200/dentists/'
+    r = requests.get(dentist_url)
+    if r.status_code == 200:
+        dentist_json = r.json()
+        dentist_id_list = []
+        for i in range(len(dentist_json)):
+            dentist_id = dentist_json[i]['dentistId']
+            dentist_name = dentist_json[i]['name']
+            dentist_id_list.append({'name': dentist_name, 'id': dentist_id})
+        
+        timeslot_list = []
+        for i in range(len(dentist_id_list)):
+            timeslot_url = 'http://0.0.0.0:5100/timeslot/{}'.format(dentist_id_list[i]['id'])
+            r = requests.get(timeslot_url)
+            timeslot_list.append({'name': dentist_id_list[i]['name'], 'timeslot': r.json()})
+        
+        return timeslot_list
+    
+    return 'No doctors in the database :('
+
+< object
+
+> object get_dentist_timeslot python
+    import requests
+    id = rs.get_uservar(rs.current_user(), 'id')
+    timeslot_url = 'http://0.0.0.0:5100/timeslot/{}'.format(id)
+    r = requests.get(timeslot_url)
+    return r.json()
+
+< object
+
+

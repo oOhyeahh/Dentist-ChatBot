@@ -1,0 +1,48 @@
+---
+swagger: "2.0"
+info:
+  description: "Is used for communicate with the patient and determine the api endpoint\
+    \ call"
+  version: "0.0.1"
+  title: "Dental Chatbot"
+host: "api.domain.au"
+basePath: "/chatbot"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /message:
+    post:
+      tags:
+      - "chatbot"
+      summary: "requesting chatbot to handle task"
+      description: "ask bot"
+      operationId: "message"
+      parameters:
+      - in: "body"
+        name: "message"
+        required: false
+        schema:
+          $ref: "#/definitions/message"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: object             
+      x-swagger-router-controller: "swagger_server.controllers.chatbot_controller"                
+definitions:
+  inline_response_200:
+    properties:
+      message:
+        type: "string"
+        example: "hello bot"
+  message:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        example: "hello bot"

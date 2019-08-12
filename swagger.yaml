@@ -1,0 +1,233 @@
+swagger: '2.0'
+basePath: /
+info:
+  version: 1.0.0
+  title: Chatbot service
+  description: A overview of the dentist chatbot backend service 
+schemes: 
+ - http
+ - https
+consumes: 
+ - application/json
+produces: 
+ - application/json
+paths:
+  /dentists:
+    get:
+      tags: 
+        - Dentist
+      operationId: get_available_dentist
+      summary: Return a list of available_dentist
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items: 
+              type: object
+              properties:
+                id:
+                  type: number
+                  description: dentist id
+                  example: 1
+                name:
+                  type: string
+                  description: dentist name
+                  example: John
+            
+  /dentists/{id}/information:
+    get:
+      tags: 
+        - Dentist    
+      operationId: get_dentist_information
+      summary: Return detail information of the dentist
+      parameters:
+        - in: path
+          name: id
+          description: dentist id
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                description: dentist id
+                example: 1
+              name:
+                type: string
+                description: dentist name
+                example: John
+              location:
+                type: string
+                description: workplace location
+                example: Randwick Dentist Center
+              specialization:
+                type: string
+                description: dentist specialization
+                example: Paediatric Dentistry
+        404:
+          description: dentist not found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "dentist not found"                
+  /timeslot:
+    post:
+      tags:
+        - Timeslot
+      operationId: reserve_booking
+      summary: make reservation
+      description: make reservation with the dentist
+      parameters:
+        - in: body
+          name: booking details
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+                description: dentist id
+                example: 1
+              patientName:
+                type: string
+                description: patient name
+                example: Sam
+              phonenumber:
+                type: number
+                description: patient phone number
+              bookingdata:
+                type: string
+                description: booking data
+                example: '2019-08-08'
+              starttime:
+                type: string
+                description: start time
+                example: '9:00'
+              endtime:
+                type: string
+                description: end time
+                example: '10:00'  
+                
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "create reservation success"
+              bookingId:
+                type: number
+                example: 1
+        400:
+          description: cannot make reservation
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "The timeslot is not available for the dentist"
+        404:
+          description: dentist not found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "dentist not found"
+  /timeslot/{id}:
+    get:
+      tags:
+      - Timeslot
+      summary: "get dentist timeslot"
+      description: "get_dentist_timeslot"
+      operationId: "get_dentist_timeslot"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "dentist id"
+        required: true
+        type: "string"      
+      responses:
+        200:
+          description: "OK"
+          schema:
+              type: "object"
+              properties:
+                dentistId:
+                  type: "number"
+                  example: 1
+                  description: "dentist id"
+                timeslot:
+                  type: "array"
+                  items:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        example: "9:00"
+                      end:
+                        type: string
+                        example: "10:00"
+    delete:
+      tags:
+        - Timeslot      
+      operationId: delete_booking
+      summary: delete the reserve booking
+      description: delete the reserve booking
+      parameters:
+        - in: path
+          name: id
+          type: string
+          description: booking id
+          required: true      
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "delete booking success"
+        404:
+          description: not found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "The booking is not found"  
+  /chatbot:
+    post:
+      tags:
+      - Chatbot
+      summary: "requesting chatbot to handle task"
+      description: "ask bot"
+      operationId: "message"
+      parameters:
+      - in: "body"
+        name: "message"
+        required: false
+        schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "hello bot"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "hello bot"                        

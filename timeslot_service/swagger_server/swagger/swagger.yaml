@@ -1,0 +1,192 @@
+---
+swagger: "2.0"
+info:
+  description: "Is used for handling the booking request"
+  version: "0.0.1"
+  title: "Timeslot service"
+host: "api.domain.au"
+basePath: "/timeslot"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /:
+    post:
+      tags:
+      - "timeslot"
+      summary: "make reservation"
+      description: "make reservation with the dentist"
+      operationId: "reserve_booking"
+      parameters:
+      - in: "body"
+        name: "booking_details"
+        required: false
+        schema:
+          $ref: "#/definitions/booking_details"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "create reservation success"
+              bookingId:
+                type: "number"
+                example: 1
+        400:
+          description: "cannot make reservation"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "The timeslot is not available for the dentist"
+        404:
+          description: "dentist not found"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "dentist not found"
+      x-swagger-router-controller: "swagger_server.controllers.timeslot_controller"
+  /{id}:
+    get:
+      tags:
+      - "timeslot"
+      summary: "get dentist timeslot"
+      description: "get_dentist_timeslot"
+      operationId: "get_dentist_timeslot"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "dentist id"
+        required: true
+        type: "string"      
+      responses:
+        200:
+          description: "OK"
+          schema:
+              type: "object"
+              properties:
+                dentistId:
+                  type: "number"
+                  example: 1
+                  description: "dentist id"
+                timeslot:
+                  type: "array"
+                  items:
+                    $ref: "#/definitions/timeslot_timeslot"
+      x-swagger-router-controller: "swagger_server.controllers.timeslot_controller"      
+    delete:
+      tags:
+      - "timeslot"
+      summary: "delete the reserve booking"
+      description: "delete the reserve booking"
+      operationId: "delete_booking"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "booking id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "cancel the booking successfully"
+        404:
+          description: "not found"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "The booking is not found"
+      x-swagger-router-controller: "swagger_server.controllers.timeslot_controller"
+definitions:
+  inline_response_404:
+    properties:
+      message:
+        type: "string"
+        example: "dentist not found"
+  inline_response_404_1:
+    properties:
+      message:
+        type: "string"
+        example: "The booking is not found"
+  timeslot_timeslot:
+    properties:
+      time:
+        type: "string"
+        example: "9:30"
+        description: "timeslot"
+  inline_response_200_1:
+    properties:
+      message:
+        type: "string"
+        example: "create reservation success"
+      bookingId:
+        type: "number"
+        example: 1
+    example:
+      message: "create reservation success"
+      bookingId: 1
+  inline_response_200:
+    properties:
+      dentistId:
+        type: "number"
+        example: 1
+        description: "dentist id"
+      timeslot:
+        type: "array"
+        items:
+          $ref: "#/definitions/timeslot_timeslot"
+  inline_response_200_2:
+    properties:
+      message:
+        type: "string"
+        example: "cancel the booking successfully"
+    example:
+      message: "cancel the booking successfully"
+  booking_details:
+    type: "object"
+    properties:
+      id:
+        type: "number"
+        example: 1
+        description: "dentist id"
+      patientName:
+        type: "string"
+        example: "Sam"
+        description: "patient name"
+      phonenumber:
+        type: "string"
+        description: "patient phone number"
+      bookingdate:
+        type: "string"
+        example: "2019-07-09"
+        description: "booking date"        
+      starttime:
+        type: "string"
+        example: "9:30"
+        description: "timeslot"
+      endtime:
+        type: "string"
+        example: "10:30"
+        description: "timeslot"               
+  inline_response_400:
+    properties:
+      message:
+        type: "string"
+        example: "The timeslot is not available for the dentist"

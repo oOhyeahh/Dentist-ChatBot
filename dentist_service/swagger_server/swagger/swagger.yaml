@@ -1,0 +1,151 @@
+---
+swagger: "2.0"
+info:
+  description: "Is used for handling the dentist information and resource"
+  version: "0.0.1"
+  title: "Dentists service"
+host: "dentist"
+basePath: "/dentists"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /:
+    get:
+      tags:
+      - "Dentist"
+      summary: "Return a list of available_dentist"
+      operationId: "get_available_dentist"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                  example: 1
+                  description: "dentist id"
+                name:
+                  type: "string"
+                  example: "John"
+                  description: "dentist name"
+      x-swagger-router-controller: "swagger_server.controllers.dentist_controller"
+  /{id}/information:
+    get:
+      tags:
+      - "Dentist"
+      summary: "Return detail information of the dentist"
+      operationId: "get_dentist_information"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "dentist id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "number"
+                example: 1
+                description: "dentist id"
+              name:
+                type: "string"
+                example: "John"
+                description: "dentist name"
+              location:
+                type: "string"
+                example: "Randwick Dentist Center"
+                description: "workplace location"
+              specialization:
+                type: "string"
+                example: "Paediatric Dentistry"
+                description: "dentist specialization"
+        404:
+          description: "dentist not found"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "dentist not found"
+      x-swagger-router-controller: "swagger_server.controllers.dentist_controller"
+  /{name}:
+    get:
+      tags:
+      - "Dentist"
+      summary: "Return detail information of the dentist"
+      operationId: "get_dentist_by_name"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "search dentist by name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                  example: 1
+                  description: "dentist id"
+                name:
+                  type: "string"
+                  example: "John"
+                  description: "dentist name"  
+      x-swagger-router-controller: "swagger_server.controllers.dentist_controller"
+definitions:
+  inline_response_404:
+    properties:
+      message:
+        type: "string"
+        example: "dentist not found"
+  inline_response_200_1:
+    properties:
+      id:
+        type: "number"
+        example: 1
+        description: "dentist id"
+      name:
+        type: "string"
+        example: "John"
+        description: "dentist name"
+      location:
+        type: "string"
+        example: "Randwick Dentist Center"
+        description: "workplace location"
+      specialization:
+        type: "string"
+        example: "Paediatric Dentistry"
+        description: "dentist specialization"
+    example:
+      name: "John"
+      specialization: "Paediatric Dentistry"
+      location: "Randwick Dentist Center"
+      id: 1
+  inline_response_200:
+    properties:
+      id:
+        type: "number"
+        example: 1
+        description: "dentist id"
+      name:
+        type: "string"
+        example: "John"
+        description: "dentist name"
